@@ -69,6 +69,14 @@
 <section id="knobs-section" class="container-fluid">
     <!-- Row to hold 4 sectors -->
     <div class="row w-100">
+        <div class="col-12 col-md-4">
+            <div id="slider"></div>
+            <div class="mt-3">
+                <strong>Selected Range:</strong>
+                <span id="range-value"></span>
+            </div>
+        </div>
+        <div class="w-100"></div>
         <!-- Current Reps -->
         <div class="col-12 col-md-6 knob-container">
             <div class="knob-label">Current Reps</div>
@@ -77,10 +85,10 @@
                     class="knob"
                     value="15"
                     data-thickness="0.4"
-                    
-                    
-                    data-min="1"
-                    data-max="85"
+
+                    data-cursor=true
+                    data-min="5"
+                    data-max="30"
                     data-angleOffset=-125
                     data-angleArc=250
                     data-fgColor="#007bff"
@@ -98,8 +106,8 @@
                     class="knob"
                     value="70"
                     data-thickness="0.4"
-                    
-                    
+                    data-stopper="false"
+                    data-cursor=true
                     data-min="1"
                     data-max="500"
                     data-fgColor="#007bff"
@@ -117,10 +125,10 @@
                     class="knob"
                     value="12"
                     data-thickness="0.4"
-                    
-                    
-                    data-min="1"
-                    data-max="85"
+
+                    data-cursor=true
+                    data-min="5"
+                    data-max="30"
                     data-angleOffset=-125
                     data-angleArc=250
                     data-fgColor="#007bff"
@@ -138,8 +146,8 @@
                     class="knob"
                     value="120"
                     data-thickness="0.4"
-                    
-                    
+
+                    data-cursor=true
                     data-min="1"
                     data-max="500"
                     data-angleOffset=-125
@@ -157,7 +165,10 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.js"
+        integrity="sha256-eSIpJ8t2lfQDFEtY4x2mpwgtguCNMQsM13YmTTEavn0=" crossOrigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.css"
+      integrity="sha256-nckVXP1jMdH1YpiBrAvGOSgkP6TB2DsXzkkhtSAL4K4=" crossorigin="anonymous">
 <script>
 
     function pchipInterpolate(xArray, yArray, xValue) {
@@ -190,10 +201,10 @@
                     derivatives[i] = weightedAvg;
                 }
             }
-            return { derivatives, slopes };
+            return {derivatives, slopes};
         }
 
-        const { derivatives, slopes } = computeDerivatives(xArray, yArray);
+        const {derivatives, slopes} = computeDerivatives(xArray, yArray);
 
         // Locate the interval
         let i = 0;
@@ -249,10 +260,10 @@
                     derivatives[i] = weightedAvg;
                 }
             }
-            return { derivatives, slopes };
+            return {derivatives, slopes};
         }
 
-        const { derivatives } = computeDerivatives(xArray, yArray);
+        const {derivatives} = computeDerivatives(xArray, yArray);
 
         // Locate the interval where yValue falls
         let i = 0;
@@ -311,11 +322,25 @@
     // function PCHIP(xValue, xArray, yArray) {
     //     return pchipInterpolate(xArray.map(Number), yArray.map(Number), Number(xValue));
     // }
-    const y = [100,95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15];
-    const x = [1,3.28,4.94,7.15,9.75,12.37,14.8,17.11,19.53,22.43,25.99,30.37,35.75,42.37,50.50,60.48,72.75,87.79];
-    let counter=0;
-    const changeFunc = function (v, tp) {
-        if(counter>0){
+    const y = [100, 95, 90, 85, 80, 75, 70, 65, 60, 55, 50, 45, 40, 35, 30, 25, 20, 15];
+    const x = [1, 3.28, 4.94, 7.15, 9.75, 12.37, 14.8, 17.11, 19.53, 22.43, 25.99, 30.37, 35.75, 42.37, 50.50, 60.48, 72.75, 87.79];
+    let counter = 0;
+    let minReps = 5;
+    let maxReps = 30;
+
+    let v, up=0,down=0,i=1
+        // ,$idir = $("div.idir")
+        // ,$ival = $("div.ival")
+        ,incr = function() { i++;
+        console.log(i);
+        //$ival.html(i);
+    }
+        ,decr = function() { i--; console.log(i);
+        //$ival.html(i);
+    };
+
+    const changeFunc = function (v, tp, $this) {
+        if (counter > 0) {
             return;
         }
         counter++;
@@ -323,56 +348,122 @@
         let currentWeight = $('#knob-current-weight').val();
         let wantedReps = $('#knob-wanted-reps').val();
         let wantedWeight = $('#knob-wanted-weight').val();
-        let currentPercentage = pchipInterpolate(x,y,currentReps);
-
-
-        if(this.$.attr('id')=='knob-wanted-weight'){
-
-            let wantedPercentage = wantedWeight/currentWeight*currentPercentage;
-            if(wantedPercentage>100){
-                $('#knob-wanted-reps').val("Too much weight");
-            }else if(wantedPercentage<15){
-                $('#knob-wanted-reps').val("Too little weight");
-            }else {
-                console.log(wantedPercentage);
-                let newReps = Math.round(reversePchipInterpolate(y, x, wantedPercentage));
-                $('#knob-wanted-reps').val(newReps);
+        let currentPercentage = pchipInterpolate(x, y, currentReps);
+        console.log("any change");
+        console.log($this.attr('id'));
+        if ($this.attr('id') == 'knob-current-weight') {
+            console.log("currentweight");
+            if(v > this.cv){
+                if(up){
+                    incr();
+                    up=0;
+                }else{up=1;down=0;}
+            } else {
+                if(v < this.cv){
+                    if(down){
+                        decr();
+                        down=0;
+                    }else{down=1;up=0;}
+                }
             }
-        }else{
-            if(this.$.attr('id')!='knob-wanted-reps' && tp=='change'){
+            this.cv=v;
+            //$('#knob-current-weight').val(i)
+
+        }
+        if ($this.attr('id') == 'knob-wanted-weight') {
+
+            let wantedPercentage = wantedWeight / currentWeight * currentPercentage;
+            if (wantedPercentage > 100) {
+                $('#knob-wanted-reps').val("Too much weight");
+            } else if (wantedPercentage < 15) {
+                $('#knob-wanted-reps').val("Too little weight");
+            } else {
+                // console.log(wantedPercentage);
+                let newReps = Math.round(reversePchipInterpolate(y, x, wantedPercentage));
+                $('#knob-wanted-reps').val(newReps).trigger('change');
+            }
+        } else {
+            if ($this.attr('id') != 'knob-wanted-reps' && tp == 'change') {
+                let minPercentage = pchipInterpolate(x,y,maxReps);
+                let maxPercentage = pchipInterpolate(x,y,minReps);
                 $('#knob-wanted-weight').trigger('configure', {
-                    max: Math.floor(currentWeight / currentPercentage * 100),
-                    min: Math.ceil(currentWeight / currentPercentage * 15),
+                    max: Math.floor(currentWeight / currentPercentage * maxPercentage),
+                    min: Math.ceil(currentWeight / currentPercentage * minPercentage),
                 });
             }
-            let wantedPercentage = pchipInterpolate(x,y,wantedReps);
+            let wantedPercentage = pchipInterpolate(x, y, wantedReps);
             let newWeight = currentWeight / currentPercentage * wantedPercentage;
             $('#knob-wanted-weight')
-                .val(Math.round(newWeight*10)/10).trigger('change');
+                .val(Math.round(newWeight * 10) / 10)
+                .trigger('change');
             // .attr('data-max', Math.floor(currentWeight / currentPercentage * 100))
             // .attr('data-min', Math.ceil(currentWeight / currentPercentage * 15))
             //.trigger('change');
             // $('#knob-wanted-weight');
-            console.log({
-                max: Math.floor(currentWeight / currentPercentage * 100),
-                min: Math.ceil(currentWeight / currentPercentage * 15),
-            });
+            // console.log({
+            //     max: Math.floor(currentWeight / currentPercentage * 100),
+            //     min: Math.ceil(currentWeight / currentPercentage * 15),
+            // });
         }
         counter--;
     };
     $(function () {
         // Initialize all knobs
-        let height = Math.floor($( document ).height()/2);
-        let width = Math.floor($('.knob-container').width()/2);
-        height = width = Math.min(height,width);
+        let height = Math.floor($(document).height() / 2);
+        let width = Math.floor($('.knob-container').width() / 2);
+        height = width = Math.min(height, width);
         //$($('.knob-container')[0]).width()
-        $(".knob").knob({
-            'change': (v)=>{changeFunc(v,'change')},
-            'release': (v)=>{changeFunc(v,'release')},
-            'width': width,
-            'height': height
+
+
+        $(".knob").each(function(){
+            let $this = $(this);
+            $this.knob({
+                'change': (v) => {
+                    changeFunc(v, 'change', $this)
+                },
+                'release': (v) => {
+                    changeFunc(v, 'release', $this)
+                },
+                'width': width,
+                'height': height
+            });
+        });
+        const slider = $('#slider')[0];
+
+        noUiSlider.create(slider, {
+            start: [5, 30], // Initial range
+            connect: true, // Connect the range between handles
+            range: {
+                min: 1,
+                max: 87
+            },
+            tooltips: [true, true], // Display tooltips on handles
+            step: 1 // Increment steps
         });
 
+
+// Update the range value dynamically
+        const $rangeValue = $('#range-value');
+        slider.noUiSlider.on('update', function (values) {
+            $rangeValue.text(`${Math.round(values[0])} - ${Math.round(values[1])}`);
+            minReps = values[0];
+            maxReps = values[1];
+            let knobsConf = {
+                min: Math.round(values[0]),
+                max: Math.round(values[1]),
+            };
+            $('#knob-wanted-reps').trigger('configure', knobsConf).trigger('change');
+            $('#knob-current-reps').trigger('configure', knobsConf).trigger('change');
+            let currentReps = $('#knob-current-reps').val();
+            let currentWeight = $('#knob-current-weight').val();
+            let currentPercentage = pchipInterpolate(x, y, currentReps);
+            let minPercentage = pchipInterpolate(x,y,maxReps);
+            let maxPercentage = pchipInterpolate(x,y,minReps);
+            $('#knob-wanted-weight').trigger('configure', {
+                max: Math.floor(currentWeight / currentPercentage * maxPercentage),
+                min: Math.ceil(currentWeight / currentPercentage * minPercentage),
+            }).trigger('change');
+        });
     });
 </script>
 </body>
