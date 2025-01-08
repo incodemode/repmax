@@ -86,7 +86,7 @@
                     value="15"
                     data-thickness="0.4"
 
-                    data-cursor=true
+                    data-cursor=10
                     data-min="5"
                     data-max="30"
                     data-angleOffset=-125
@@ -107,7 +107,7 @@
                     value="70"
                     data-thickness="0.4"
                     data-stopper="false"
-                    data-cursor=true
+                    data-cursor=10
                     data-min="1"
                     data-max="500"
                     data-fgColor="#007bff"
@@ -126,7 +126,7 @@
                     value="12"
                     data-thickness="0.4"
 
-                    data-cursor=true
+                    data-cursor=10
                     data-min="5"
                     data-max="30"
                     data-angleOffset=-125
@@ -147,7 +147,7 @@
                     value="120"
                     data-thickness="0.4"
 
-                    data-cursor=true
+                    data-cursor=10
                     data-min="1"
                     data-max="500"
                     data-angleOffset=-125
@@ -328,16 +328,19 @@
     let minReps = 5;
     let maxReps = 30;
 
-    let v, up=0,down=0,i=1
+    let v, up = 0, down = 0, i = 1
         // ,$idir = $("div.idir")
         // ,$ival = $("div.ival")
-        ,incr = function() { i++;
-        console.log(i);
-        //$ival.html(i);
-    }
-        ,decr = function() { i--; console.log(i);
-        //$ival.html(i);
-    };
+        , incr = function () {
+            i++;
+            console.log(i);
+            //$ival.html(i);
+        }
+        , decr = function () {
+            i--;
+            console.log(i);
+            //$ival.html(i);
+        };
 
     const changeFunc = function (v, tp, $this) {
         if (counter > 0) {
@@ -353,20 +356,26 @@
         console.log($this.attr('id'));
         if ($this.attr('id') == 'knob-current-weight') {
             console.log("currentweight");
-            if(v > this.cv){
-                if(up){
+            if (v > this.cv) {
+                if (up) {
                     incr();
-                    up=0;
-                }else{up=1;down=0;}
+                    up = 0;
+                } else {
+                    up = 1;
+                    down = 0;
+                }
             } else {
-                if(v < this.cv){
-                    if(down){
+                if (v < this.cv) {
+                    if (down) {
                         decr();
-                        down=0;
-                    }else{down=1;up=0;}
+                        down = 0;
+                    } else {
+                        down = 1;
+                        up = 0;
+                    }
                 }
             }
-            this.cv=v;
+            this.cv = v;
             //$('#knob-current-weight').val(i)
 
         }
@@ -384,8 +393,8 @@
             }
         } else {
             if ($this.attr('id') != 'knob-wanted-reps' && tp == 'change') {
-                let minPercentage = pchipInterpolate(x,y,maxReps);
-                let maxPercentage = pchipInterpolate(x,y,minReps);
+                let minPercentage = pchipInterpolate(x, y, maxReps);
+                let maxPercentage = pchipInterpolate(x, y, minReps);
                 $('#knob-wanted-weight').trigger('configure', {
                     max: Math.floor(currentWeight / currentPercentage * maxPercentage),
                     min: Math.ceil(currentWeight / currentPercentage * minPercentage),
@@ -415,7 +424,7 @@
         //$($('.knob-container')[0]).width()
 
 
-        $(".knob").each(function(){
+        $(".knob").each(function () {
             let $this = $(this);
             $this.knob({
                 'change': (v) => {
@@ -425,7 +434,26 @@
                     changeFunc(v, 'release', $this)
                 },
                 'width': width,
-                'height': height
+                'height': height,
+                'draw': function () {
+                    console.log(this);
+                    // Draw the min value
+                    var min = this.o.min;
+                    var max = this.o.max;
+
+                    // Set the canvas context
+                    var ctx = this.g;
+
+                    // Min value position
+                    ctx.font = "bold 60px Arial";
+                    ctx.fillStyle = "#000000"; // Text color
+                    ctx.textAlign = "center";
+                    // ctx.fillText(min+"", this.w*0.4, this.h-50);
+                    ctx.textAlign = "left";
+                    ctx.fillText(min+"", this.w*0.5, this.h*2*0.9);
+                    ctx.textAlign = "right";
+                    ctx.fillText(max+"", this.w*2-this.w*0.5, this.h*2*0.9);
+                }
             });
         });
         const slider = $('#slider')[0];
@@ -457,8 +485,8 @@
             let currentReps = $('#knob-current-reps').val();
             let currentWeight = $('#knob-current-weight').val();
             let currentPercentage = pchipInterpolate(x, y, currentReps);
-            let minPercentage = pchipInterpolate(x,y,maxReps);
-            let maxPercentage = pchipInterpolate(x,y,minReps);
+            let minPercentage = pchipInterpolate(x, y, maxReps);
+            let maxPercentage = pchipInterpolate(x, y, minReps);
             $('#knob-wanted-weight').trigger('configure', {
                 max: Math.floor(currentWeight / currentPercentage * maxPercentage),
                 min: Math.ceil(currentWeight / currentPercentage * minPercentage),
