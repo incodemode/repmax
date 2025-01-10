@@ -19,30 +19,72 @@
             integrity="sha256-2144q+NOM/XU6ZxSqRTJ8P0W/CkY6zXc6mXYt4+mF9s=" crossorigin="anonymous"></script>
 
     <style>
-        /* Make sure the knobs section occupies the full viewport height */
-        #knobs-section {
-            height: 100vh;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center; /* Vertically center the content */
-            justify-content: center; /* Horizontally center the content */
+        body, html {
+            height: 100%;
+            margin: 0;
         }
 
-        .knob-container {
-            text-align: center;
-            margin: 1rem 0;
+        .top-section {
+            /* Top section takes variable height based on content */
         }
+
+        .bottom-section {
+            flex-grow: 1; /* Bottom section grows to fill remaining space */
+            display: flex;
+            align-items: stretch; /* Ensures rows stretch properly */
+        }
+
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: stretch;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f8f9fa;
+        }
+
+        .grid-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #ddd;
+            background-color: #f8f9fa;
+        }
+
+        /* Make sure the knobs section occupies the full viewport height */
+        /*#knobs-section {*/
+        /*    height: 100vh;*/
+        /*    display: flex;*/
+        /*    flex-wrap: wrap;*/
+        /*    align-items: center; !* Vertically center the content *!*/
+        /*    justify-content: center; !* Horizontally center the content *!*/
+        /*}*/
+
+        /*.knob-container {*/
+        /*    text-align: center;*/
+        /*    margin: 1rem 0;*/
+        /*}*/
 
         .knob-label {
-            margin-top: 0.5rem;
-            font-weight: 500;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+            color: black;
         }
 
-        /* Adjust knob sizes for responsiveness */
-        .knob {
-            width: 150px;
-            height: 150px;
-            margin: 0 auto;
+        .text-element {
+            flex-grow: 1; /* Expands to take the remaining vertical space */
+            width: 100%; /* Ensures full horizontal expansion */
+            display: flex; /* Enables Flexbox for centering */
+            justify-content: center; /* Centers content horizontally */
+            align-items: center; /* Centers content vertically */
+            padding: 0px;
+            background-color: #fff; /* Background color for better visibility */
+            /*border: 1px solid #ccc; !* Optional border for separation *!*/
+            /*border-radius: 5px;*/
+            text-align: center; /* Ensures text is centered inside the element */
         }
 
         @media (max-width: 768px) {
@@ -51,115 +93,134 @@
                 height: 120px;
             }
         }
+
+        #slider .noUi-connect {
+            background: #007bff;
+        }
+
+        .noUi-horizontal .noUi-handle, .noUi-vertical .noUi-handle {
+            background: #007bff;
+        }
+
+        /*.noUi-target.noUi-horizontal .noUi-tooltip {*/
+        /*    background-color: #007bff;*/
+        /*}*/
     </style>
 </head>
 
 <body>
-<!-- Header / Title / Instructions -->
-<header class="bg-light py-4">
-    <div class="container">
-        <h1 class="text-center">Rep Calculator</h1>
-        <p class="text-center lead">
-            Enter your current and desired reps/weight below using the knobs.
-        </p>
-    </div>
-</header>
 
-<!-- Main Content: Knobs Section -->
-<section id="knobs-section" class="container-fluid">
-    <!-- Row to hold 4 sectors -->
-    <div class="row w-100">
-        <div class="col-12 col-md-4">
-            <div id="slider"></div>
-            <div class="mt-3">
-                <strong>Selected Range:</strong>
-                <span id="range-value"></span>
+<div class="d-flex flex-column h-100">
+    <!-- Top Section -->
+    <div class="top-section bg-light p-3">
+        <header class="bg-light py-4">
+            <div class="container">
+                <h1 class="text-center">Rep Calculator</h1>
+                <p class="text-center lead">
+                    Enter your current and desired reps/weight below using the knobs.
+                </p>
+            </div>
+        </header>
+        <div class="row w-100">
+            <div class="col-12 col-md-4">
+                <div id="slider"></div>
+<!--                <div class="mt-3">-->
+<!--                    <strong>Selected Range:</strong>-->
+<!--                    <span id="range-value"></span>-->
+<!--                </div>-->
             </div>
         </div>
-        <div class="w-100"></div>
-        <!-- Current Reps -->
-        <div class="col-12 col-md-6 knob-container">
-            <div class="knob-label">Current Reps</div>
-            <input
-                    type="text"
-                    class="knob"
-                    value="15"
-                    data-thickness="0.4"
+    </div>
 
-                    data-cursor=10
-                    data-min="5"
-                    data-max="30"
-                    data-angleOffset=-125
-                    data-angleArc=250
-                    data-fgColor="#007bff"
-                    data-bgColor="#e9ecef"
-                    id="knob-current-reps"
-            />
+    <!-- Bottom Section -->
+    <div class="bottom-section bg-dark text-white">
+        <div class="container-fluid h-100">
+            <div class="row h-100">
+                <div class="col-6 grid-item knob-container">
+                    <div class="knob-label">Current Reps</div>
+                    <div class="text-element">
+                        <input
+                                type="text"
+                                class="knob"
+                                value="15"
+                                data-thickness="0.4"
+                                data-cursor=10
+                                data-min="5"
+                                data-max="30"
+                                data-angleOffset=-125
+                                data-angleArc=250
+                                data-fgColor="#007bff"
+                                data-bgColor="#e9ecef"
+                                id="knob-current-reps"
+                        />
+                    </div>
+                </div>
+                <div class="col-6 grid-item knob-container">
+                    <div class="knob-label">Current Weight</div>
+                    <div class="text-element">
+                        <input
+                                type="text"
+                                class="knob"
+                                value="70"
+                                data-thickness="0.4"
+                                data-stopper="false"
+                                data-cursor=10
+                                data-min="1" data-max="500"
+                                data-fgColor="#007bff"
+                                data-bgColor="#e9ecef"
+                                data-displayInput="false"
+                                id="knob-current-weight"
+                        />
+                    </div>
+                </div>
+                <div class="col-6 grid-item knob-container">
+                    <div class="knob-label">Wanted Reps</div>
+                    <div class="text-element">
+                        <input
+                                type="text"
+                                class="knob"
+                                value="12"
+                                data-thickness="0.4"
 
-        </div>
+                                data-cursor=10
+                                data-min="5"
+                                data-max="30"
+                                data-angleOffset=-125
+                                data-angleArc=250
+                                data-fgColor="#007bff"
+                                data-bgColor="#e9ecef"
+                                id="knob-wanted-reps"
+                        />
+                    </div>
+                </div>
+                <div class="col-6 grid-item knob-container">
+                    <div class="knob-label">Wanted Weight</div>
+                    <div class="text-element">
+                        <input
+                                type="text"
+                                class="knob"
+                                value="120"
+                                data-thickness="0.4"
 
-        <!-- Current Weight -->
-        <div class="col-12 col-md-6 knob-container">
-            <div class="knob-label">Current Weight</div>
-            <input
-                    type="text"
-                    class="knob"
-                    value="70"
-                    data-thickness="0.4"
-                    data-stopper="false"
-                    data-cursor=10
-                    data-min="1"
-                    data-max="500"
-                    data-fgColor="#007bff"
-                    data-bgColor="#e9ecef"
-                    id="knob-current-weight"
-            />
-
-        </div>
-
-        <!-- Wanted Reps -->
-        <div class="col-12 col-md-6 knob-container">
-            <div class="knob-label">Wanted Reps</div>
-            <input
-                    type="text"
-                    class="knob"
-                    value="12"
-                    data-thickness="0.4"
-
-                    data-cursor=10
-                    data-min="5"
-                    data-max="30"
-                    data-angleOffset=-125
-                    data-angleArc=250
-                    data-fgColor="#007bff"
-                    data-bgColor="#e9ecef"
-                    id="knob-wanted-reps"
-            />
-
-        </div>
-
-        <!-- Wanted Weight -->
-        <div class="col-12 col-md-6 knob-container">
-            <div class="knob-label">Wanted Weight</div>
-            <input
-                    type="text"
-                    class="knob"
-                    value="120"
-                    data-thickness="0.4"
-
-                    data-cursor=10
-                    data-min="1"
-                    data-max="500"
-                    data-angleOffset=-125
-                    data-angleArc=250
-                    data-fgColor="#007bff"
-                    data-bgColor="#e9ecef"
-                    id="knob-wanted-weight"
-            />
-
+                                data-cursor=10
+                                data-min="1"
+                                data-max="500"
+                                data-angleOffset=-125
+                                data-angleArc=250
+                                data-fgColor="#007bff"
+                                data-bgColor="#e9ecef"
+                                id="knob-wanted-weight"
+                        />
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</section>
+</div>
+
+
+<!-- Main Content: Knobs Section -->
+
 
 <!-- Bootstrap 5 JS (CDN) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -337,7 +398,9 @@
             //$ival.html(i);
         }
         , decr = function () {
-            i--;
+            if(i>1) {
+                i--;
+            }
             console.log(i);
             //$ival.html(i);
         };
@@ -418,9 +481,9 @@
     };
     $(function () {
         // Initialize all knobs
-        let height = Math.floor($(document).height() / 2);
-        let width = Math.floor($('.knob-container').width() / 2);
-        height = width = Math.min(height, width);
+        let height = Math.floor($('.text-element').height());
+        let width = Math.floor($('.text-element').width());
+        height = width = Math.min(height, width)-20;
         //$($('.knob-container')[0]).width()
 
 
@@ -440,22 +503,62 @@
                     // Draw the min value
                     var min = this.o.min;
                     var max = this.o.max;
-
+                    var scale = this.o.scale;
                     // Set the canvas context
-                    var ctx = this.g;
 
+                    var ctx = this.g;
                     // Min value position
-                    ctx.font = "bold 60px Arial";
+
+                    let fontsize = 50//Math.round(this.w * 2 / 10)
+                    fontsize = Math.round(this.w / 10)*this.scale;
+
+                    ctx.font = "bold 50px Arial";
+                    ctx.font = "bold "+fontsize+"px Arial";
                     ctx.fillStyle = "#000000"; // Text color
-                    ctx.textAlign = "center";
+                    // ctx.textAlign = "center";
                     // ctx.fillText(min+"", this.w*0.4, this.h-50);
                     ctx.textAlign = "left";
-                    ctx.fillText(min+"", this.w*0.5, this.h*2*0.9);
+                    console.log(fontsize, this.w * 0.5, this.h * 2 * 0.9);
+                    const rect = this.g.canvas.getBoundingClientRect();
+
+                    const visibleArea = {
+                        x: rect.x,                // X-coordinate of the visible area
+                        y: rect.y,                // Y-coordinate of the visible area
+                        width: rect.width,        // Width of the visible area
+                        height: rect.height       // Height of the visible area
+                    };
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+                    // Perform drawing at the specified coordinates
+
+                    console.log(visibleArea);
+                    ctx.fillText(min + "", 0.25*visibleArea.width*this.scale, 0.9*visibleArea.height*this.scale);
                     ctx.textAlign = "right";
-                    ctx.fillText(max+"", this.w*2-this.w*0.5, this.h*2*0.9);
+                    ctx.fillText(max + "", 0.75*visibleArea.width*this.scale, 0.9*visibleArea.height*this.scale);
+                    ctx.font = "bold "+(fontsize*2.5)+"px Arial";
+                    if(this.$.attr('id')=='knob-current-weight') {
+                        ctx.fillStyle = "#007bff";
+                        ctx.textAlign = "center";
+                        ctx.fillText(i + "", 0.5 * visibleArea.width * this.scale, 0.5 * visibleArea.height * this.scale + fontsize * 0.8);
+                    }
+                    // ctx.fillText(max + "", this.w * 2 - this.w * 0.5, this.h * 2 * 0.9);
+                    // drawCallback(ctx, x, y);
+
+                    // Restore the original canvas state
+                    ctx.restore();
                 }
             });
         });
+        $( window ).on( "resize", function() {
+            let height = Math.floor($('.text-element').height());
+            let width = Math.floor($('.text-element').width());
+            height = width = Math.min(height, width)-20;
+            $(".knob").trigger('configure', {
+                'width': width,
+                'height': height,
+            });
+
+        } );
         const slider = $('#slider')[0];
 
         noUiSlider.create(slider, {
@@ -473,7 +576,7 @@
 // Update the range value dynamically
         const $rangeValue = $('#range-value');
         slider.noUiSlider.on('update', function (values) {
-            $rangeValue.text(`${Math.round(values[0])} - ${Math.round(values[1])}`);
+            // $rangeValue.text(`${Math.round(values[0])} - ${Math.round(values[1])}`);
             minReps = values[0];
             maxReps = values[1];
             let knobsConf = {
