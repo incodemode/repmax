@@ -107,9 +107,10 @@
             background: #007bff;
         }
 
-        /*.noUi-target.noUi-horizontal .noUi-tooltip {*/
-        /*    background-color: #007bff;*/
-        /*}*/
+        .noUi-target.noUi-horizontal .noUi-tooltip {
+            padding: 0px;
+            /*background-color: #007bff;*/
+        }
     </style>
 </head>
 
@@ -394,19 +395,19 @@
     let minReps = 5;
     let maxReps = 30;
 
-    let v, up = 0, down = 0, i = 1
+    let v, up = 0, down = 0, knobCurrentWeightVal = 30
         // ,$idir = $("div.idir")
         // ,$ival = $("div.ival")
         , incr = function () {
-            i++;
-            console.log(i);
+            knobCurrentWeightVal++;
+            console.log(knobCurrentWeightVal);
             //$ival.html(i);
         }
         , decr = function () {
-            if(i>1) {
-                i--;
+            if(knobCurrentWeightVal>1) {
+                knobCurrentWeightVal--;
             }
-            console.log(i);
+            console.log(knobCurrentWeightVal);
             //$ival.html(i);
         };
 
@@ -416,7 +417,7 @@
         }
         counter++;
         let currentReps = $('#knob-current-reps').val();
-        let currentWeight = $('#knob-current-weight').val();
+        let currentWeight = knobCurrentWeightVal;
         let wantedReps = $('#knob-wanted-reps').val();
         let wantedWeight = $('#knob-wanted-weight').val();
         let currentPercentage = pchipInterpolate(x, y, currentReps);
@@ -544,7 +545,7 @@
                     if(this.$.attr('id')=='knob-current-weight') {
                         ctx.fillStyle = "#007bff";
                         ctx.textAlign = "center";
-                        ctx.fillText(i + "", 0.5 * visibleArea.width * this.scale, 0.5 * visibleArea.height * this.scale + fontsize * 0.8);
+                        ctx.fillText(knobCurrentWeightVal + "", 0.5 * visibleArea.width * this.scale, 0.5 * visibleArea.height * this.scale + fontsize * 0.8);
                     }
                     // ctx.fillText(max + "", this.w * 2 - this.w * 0.5, this.h * 2 * 0.9);
                     // drawCallback(ctx, x, y);
@@ -591,7 +592,7 @@
             $('#knob-wanted-reps').trigger('configure', knobsConf).trigger('change');
             $('#knob-current-reps').trigger('configure', knobsConf).trigger('change');
             let currentReps = $('#knob-current-reps').val();
-            let currentWeight = $('#knob-current-weight').val();
+            let currentWeight = knobCurrentWeightVal;
             let currentPercentage = pchipInterpolate(x, y, currentReps);
             let minPercentage = pchipInterpolate(x, y, maxReps);
             let maxPercentage = pchipInterpolate(x, y, minReps);
