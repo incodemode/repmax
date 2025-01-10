@@ -14,7 +14,7 @@ A simple tool to calculate the number of reps based on your input, designed to h
 
 ## Usage
 
-Enter
+Enter https://incodemode.github.io/repmax/index.html
 
 ## License
 This project is licensed under the CC0 1.0 Universal (Public Domain Dedication).
