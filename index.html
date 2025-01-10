@@ -65,12 +65,14 @@
         /*    text-align: center;*/
         /*    margin: 1rem 0;*/
         /*}*/
-        h1{
+        h1 {
             font-size: 6vmin;
         }
-        .lead{
+
+        .lead {
             font-size: 4vmin;
         }
+
         .knob-label {
             font-size: 4vmin;
             font-weight: bold;
@@ -111,10 +113,46 @@
             padding: 0px;
             /*background-color: #007bff;*/
         }
+
     </style>
 </head>
 
 <body>
+<a href="https://github.com/incodemode/repmax" class="github-corner" aria-label="View source on GitHub">
+    <svg width="80" height="80" viewBox="0 0 250 250"
+         style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"/>
+    </svg>
+</a>
+<style>.github-corner:hover .octo-arm {
+    animation: octocat-wave 560ms ease-in-out
+}
+
+@keyframes octocat-wave {
+    0%, 100% {
+        transform: rotate(0)
+    }
+    20%, 60% {
+        transform: rotate(-25deg)
+    }
+    40%, 80% {
+        transform: rotate(10deg)
+    }
+}
+
+@media (max-width: 500px) {
+    .github-corner:hover .octo-arm {
+        animation: none
+    }
+
+    .github-corner .octo-arm {
+        animation: octocat-wave 560ms ease-in-out
+    }
+}</style>
 
 <div class="d-flex flex-column h-100">
     <!-- Top Section -->
@@ -130,10 +168,10 @@
         <div class="row w-100">
             <div class="col-12 col-md-4">
                 <div id="slider"></div>
-<!--                <div class="mt-3">-->
-<!--                    <strong>Selected Range:</strong>-->
-<!--                    <span id="range-value"></span>-->
-<!--                </div>-->
+                <!--                <div class="mt-3">-->
+                <!--                    <strong>Selected Range:</strong>-->
+                <!--                    <span id="range-value"></span>-->
+                <!--                </div>-->
             </div>
         </div>
     </div>
@@ -167,11 +205,11 @@
                         <input
                                 type="text"
                                 class="knob"
-                                value="70"
+                                value="0"
                                 data-thickness="0.4"
                                 data-stopper="false"
                                 data-cursor=10
-                                data-min="1" data-max="500"
+                                data-min="1" data-max="20"
                                 data-fgColor="#007bff"
                                 data-bgColor="#e9ecef"
                                 data-displayInput="false"
@@ -236,6 +274,7 @@
         integrity="sha256-eSIpJ8t2lfQDFEtY4x2mpwgtguCNMQsM13YmTTEavn0=" crossOrigin="anonymous"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nouislider@15.8.1/dist/nouislider.min.css"
       integrity="sha256-nckVXP1jMdH1YpiBrAvGOSgkP6TB2DsXzkkhtSAL4K4=" crossorigin="anonymous">
+<!-- about: github corners by Tholman -->
 <script>
 
     function pchipInterpolate(xArray, yArray, xValue) {
@@ -395,22 +434,22 @@
     let minReps = 5;
     let maxReps = 30;
 
-    let v, up = 0, down = 0, knobCurrentWeightVal = 30
+    let cv = 0, up = 0, down = 0, knobCurrentWeightVal = 30
         // ,$idir = $("div.idir")
         // ,$ival = $("div.ival")
         , incr = function () {
             knobCurrentWeightVal++;
-            console.log(knobCurrentWeightVal);
+            // console.log(knobCurrentWeightVal);
             //$ival.html(i);
         }
         , decr = function () {
-            if(knobCurrentWeightVal>1) {
+            if (knobCurrentWeightVal > 1) {
                 knobCurrentWeightVal--;
             }
-            console.log(knobCurrentWeightVal);
+            // console.log(knobCurrentWeightVal);
             //$ival.html(i);
         };
-
+    let modifyingInfinity = false;
     const changeFunc = function (v, tp, $this) {
         if (counter > 0) {
             return;
@@ -421,30 +460,20 @@
         let wantedReps = $('#knob-wanted-reps').val();
         let wantedWeight = $('#knob-wanted-weight').val();
         let currentPercentage = pchipInterpolate(x, y, currentReps);
-        console.log("any change");
-        console.log($this.attr('id'));
-        if ($this.attr('id') == 'knob-current-weight') {
-            console.log("currentweight");
-            if (v > this.cv) {
-                if (up) {
-                    incr();
-                    up = 0;
-                } else {
-                    up = 1;
-                    down = 0;
-                }
-            } else {
-                if (v < this.cv) {
-                    if (down) {
-                        decr();
-                        down = 0;
-                    } else {
-                        down = 1;
-                        up = 0;
-                    }
-                }
+        if ($this.attr('id') == 'knob-current-weight' && !modifyingInfinity) {
+            modifyingInfinity = true;
+            v = parseInt($('#knob-current-weight').val())
+            console.log({v:v,cv:cv})
+            if (cv>=16&&v<=4 || cv<=4&&v>=16) {
+                // do nothing on the skip
+            } else if (v > cv) {
+                incr();
+            }else if (v < cv) {
+                decr();
             }
-            this.cv = v;
+
+            cv = v;
+            modifyingInfinity = false;
             //$('#knob-current-weight').val(i)
 
         }
@@ -489,7 +518,7 @@
         // Initialize all knobs
         let height = Math.floor($('.text-element').height());
         let width = Math.floor($('.text-element').width());
-        height = width = Math.min(height, width)-20;
+        height = width = Math.min(height, width) - 20;
         //$($('.knob-container')[0]).width()
 
 
@@ -505,7 +534,7 @@
                 'width': width,
                 'height': height,
                 'draw': function () {
-                    console.log(this);
+                    // console.log(this);
                     // Draw the min value
                     var min = this.o.min;
                     var max = this.o.max;
@@ -516,15 +545,15 @@
                     // Min value position
 
                     let fontsize = 50//Math.round(this.w * 2 / 10)
-                    fontsize = Math.round(this.w / 10)*this.scale;
+                    fontsize = Math.round(this.w / 10) * this.scale;
 
                     ctx.font = "bold 50px Arial";
-                    ctx.font = "bold "+fontsize+"px Arial";
+                    ctx.font = "bold " + fontsize + "px Arial";
                     ctx.fillStyle = "#000000"; // Text color
                     // ctx.textAlign = "center";
                     // ctx.fillText(min+"", this.w*0.4, this.h-50);
                     ctx.textAlign = "left";
-                    console.log(fontsize, this.w * 0.5, this.h * 2 * 0.9);
+                    // console.log(fontsize, this.w * 0.5, this.h * 2 * 0.9);
                     const rect = this.g.canvas.getBoundingClientRect();
 
                     const visibleArea = {
@@ -537,12 +566,12 @@
 
                     // Perform drawing at the specified coordinates
 
-                    console.log(visibleArea);
-                    ctx.fillText(min + "", 0.25*visibleArea.width*this.scale, 0.9*visibleArea.height*this.scale);
+                    // console.log(visibleArea);
+                    ctx.fillText(min + "", 0.25 * visibleArea.width * this.scale, 0.9 * visibleArea.height * this.scale);
                     ctx.textAlign = "right";
-                    ctx.fillText(max + "", 0.75*visibleArea.width*this.scale, 0.9*visibleArea.height*this.scale);
-                    ctx.font = "bold "+(fontsize*2.5)+"px Arial";
-                    if(this.$.attr('id')=='knob-current-weight') {
+                    ctx.fillText(max + "", 0.75 * visibleArea.width * this.scale, 0.9 * visibleArea.height * this.scale);
+                    ctx.font = "bold " + (fontsize * 2.5) + "px Arial";
+                    if (this.$.attr('id') == 'knob-current-weight') {
                         ctx.fillStyle = "#007bff";
                         ctx.textAlign = "center";
                         ctx.fillText(knobCurrentWeightVal + "", 0.5 * visibleArea.width * this.scale, 0.5 * visibleArea.height * this.scale + fontsize * 0.8);
@@ -555,16 +584,16 @@
                 }
             });
         });
-        $( window ).on( "resize", function() {
+        $(window).on("resize", function () {
             let height = Math.floor($('.text-element').height());
             let width = Math.floor($('.text-element').width());
-            height = width = Math.min(height, width)-20;
+            height = width = Math.min(height, width) - 20;
             $(".knob").trigger('configure', {
                 'width': width,
                 'height': height,
             });
 
-        } );
+        });
         const slider = $('#slider')[0];
 
         noUiSlider.create(slider, {
