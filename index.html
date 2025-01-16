@@ -584,8 +584,8 @@
                 'release': (v) => {
                     changeFunc(v, 'release', $this)
                 },
-                'width': $this.attr('id')=='knob-current-weight-dec'?width*0.8:width,
-                'height': $this.attr('id')=='knob-current-weight-dec'?height*0.8:height,
+                'width': $this.attr('id')=='knob-current-weight-dec'?Math.round(width*0.8):width,
+                'height': $this.attr('id')=='knob-current-weight-dec'?Math.round(height*0.8):height,
                 'draw': function () {
                     // console.log(this);
                     // Draw the min value
@@ -643,9 +643,12 @@
             let height = Math.floor($('.text-element').height());
             let width = Math.floor($('.text-element').width());
             height = width = Math.min(height, width) - 20;
-            $(".knob").trigger('configure', {
-                'width': width,
-                'height': height,
+            $(".knob").each(function(){
+                $this = $(this);
+                $this.trigger('configure', {
+                    'width': $this.attr('id')=='knob-current-weight-dec'?Math.round(width*0.8):width,
+                    'height': $this.attr('id')=='knob-current-weight-dec'?Math.round(height*0.8):height,
+                });
             });
 
         });
