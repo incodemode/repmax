@@ -119,6 +119,25 @@
             /*background-color: #007bff;*/
         }
 
+        .text-element2 {
+    position: relative; /* Enables positioning of child elements */
+    display: flex; /* Flexbox is optional here, but helps with centering */
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    flex-grow: 1; /* Expands to fill the parent container */
+    width: 100%;
+    height: 100%; /* Ensures the container takes full height */
+    background-color: #fff; /* Background color for visibility */
+    text-align: center;
+}
+
+.stacked-div {
+    position: absolute; /* Absolute positioning to stack them */
+    top: 50%; /* Centers vertically */
+    left: 50%; /* Centers horizontally */
+    transform: translate(-50%, -50%); /* Aligns center by offsetting 50% of its size */
+}
+
     </style>
 </head>
 
@@ -206,20 +225,38 @@
                 </div>
                 <div class="col-6 grid-item knob-container">
                     <div class="knob-label">Current Weight</div>
-                    <div class="text-element">
-                        <input
-                                type="text"
-                                class="knob"
-                                value="1"
-                                data-thickness="0.4"
-                                data-stopper="false"
-                                data-cursor=10
-                                data-min="1" data-max="20"
-                                data-fgColor="#007bff"
-                                data-bgColor="#e9ecef"
-                                data-displayInput="false"
-                                id="knob-current-weight"
-                        />
+                    <div class="text-element2">
+                        <div class="stacked-div">
+                            <input
+                                    type="text"
+                                    class="knob"
+                                    value="1"
+                                    data-thickness="0.2"
+                                    data-stopper="false"
+                                    data-cursor=10
+                                    data-min="1" data-max="20"
+                                    data-fgColor="#007bff"
+                                    data-bgColor="#e9ecef"
+                                    data-displayInput="false"
+                                    id="knob-current-weight"
+                            />
+                        </div>
+                        <div class="stacked-div">
+                            <input
+                                    type="text"
+                                    class="knob"
+                                    value="1"
+                                    data-thickness="0.25"
+                                    data-stopper="false"
+                                    data-cursor=10
+                                    data-min="1" data-max="20"
+                                    data-fgColor="#007bff"
+                                    data-bgColor="#d9dee3"
+                                    data-displayInput="false"
+                                    id="knob-current-weight-dec"
+                            />
+                        </div>
+
                     </div>
                 </div>
                 <div class="col-6 grid-item knob-container">
@@ -439,17 +476,18 @@
     let minReps = 5;
     let maxReps = 30;
 
-    let cv = 0, up = 0, down = 0, knobCurrentWeightVal = 30
+    let cvd=0,cv = 0, up = 0, down = 0, knobCurrentWeightVal = 30
         // ,$idir = $("div.idir")
         // ,$ival = $("div.ival")
-        , incr = function () {
-            knobCurrentWeightVal++;
+        , incr = function (amt) {
+            knobCurrentWeightVal = knobCurrentWeightVal +amt;
             // console.log(knobCurrentWeightVal);
             //$ival.html(i);
         }
-        , decr = function () {
-            if (knobCurrentWeightVal > 1) {
-                knobCurrentWeightVal--;
+        , decr = function (amt) {
+            knobCurrentWeightVal = knobCurrentWeightVal -amt;
+            if (knobCurrentWeightVal < 0) {
+                knobCurrentWeightVal = 0;
             }
             // console.log(knobCurrentWeightVal);
             //$ival.html(i);
@@ -465,21 +503,31 @@
         let wantedReps = $('#knob-wanted-reps').val();
         let wantedWeight = $('#knob-wanted-weight').val();
         let currentPercentage = pchipInterpolate(x, y, currentReps);
-        if ($this.attr('id') == 'knob-current-weight' && !modifyingInfinity) {
+        if (($this.attr('id') == 'knob-current-weight' || $this.attr('id') == 'knob-current-weight-dec' )&& !modifyingInfinity) {
             modifyingInfinity = true;
-            v = parseInt($('#knob-current-weight').val())
-            console.log({v:v,cv:cv})
-            if (cv>=16&&v<=4 || cv<=4&&v>=16) {
-                // do nothing on the skip
-            } else if (v > cv) {
-                incr();
-            }else if (v < cv) {
-                decr();
+            v = parseInt($this.val())
+            let prevV = cv;
+            let amt = 1
+            if ($this.attr('id') == 'knob-current-weight-dec' ){
+                prevV = cvd;
+                amt = 10;
             }
-
-            cv = v;
+            console.log({v:v,prevV:prevV})
+            if (prevV>=16&&v<=4 || prevV<=4&&v>=16) {
+                // do nothing on the skip
+            } else if (v > prevV) {
+                incr(amt);
+            }else if (v < prevV) {
+                decr(amt);
+            }
+            if($this.attr('id') == 'knob-current-weight'){
+                cv = v;
+            } else if ($this.attr('id') == 'knob-current-weight-dec' ){
+                cvd = v;
+                $('#knob-current-weight').trigger('change');
+            }
             modifyingInfinity = false;
-            //$('#knob-current-weight').val(i)
+
 
         }
         if ($this.attr('id') == 'knob-wanted-weight') {
@@ -536,8 +584,8 @@
                 'release': (v) => {
                     changeFunc(v, 'release', $this)
                 },
-                'width': width,
-                'height': height,
+                'width': $this.attr('id')=='knob-current-weight-dec'?width*0.8:width,
+                'height': $this.attr('id')=='knob-current-weight-dec'?height*0.8:height,
                 'draw': function () {
                     // console.log(this);
                     // Draw the min value
@@ -572,11 +620,13 @@
                     // Perform drawing at the specified coordinates
 
                     // console.log(visibleArea);
-                    ctx.fillText(min + "", 0.25 * visibleArea.width * this.scale, 0.9 * visibleArea.height * this.scale);
-                    ctx.textAlign = "right";
-                    ctx.fillText(max + "", 0.75 * visibleArea.width * this.scale, 0.9 * visibleArea.height * this.scale);
-                    ctx.font = "bold " + (fontsize * 2.5) + "px Arial";
+                    if (this.$.attr('id') != 'knob-current-weight' && this.$.attr('id') != 'knob-current-weight-dec') {
+                        ctx.fillText(min + "", 0.25 * visibleArea.width * this.scale, 0.9 * visibleArea.height * this.scale);
+                        ctx.textAlign = "right";
+                        ctx.fillText(max + "", 0.75 * visibleArea.width * this.scale, 0.9 * visibleArea.height * this.scale);
+                    }
                     if (this.$.attr('id') == 'knob-current-weight') {
+                        ctx.font = "bold " + (fontsize * 2.5) + "px Arial";
                         ctx.fillStyle = "#007bff";
                         ctx.textAlign = "center";
                         ctx.fillText(knobCurrentWeightVal + "", 0.5 * visibleArea.width * this.scale, 0.5 * visibleArea.height * this.scale + fontsize * 0.8);
